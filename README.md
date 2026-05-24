@@ -11,22 +11,47 @@ translation has to live in code rather than configuration.
 
 ## Installation
 
+### From PyPI (normal use)
+
 ```bash
-pip install git+https://github.com/larsborn/nsq2mariadb.git@v0.1.0
+pip install nsq2mariadb
 ```
 
-Or for local development:
+Pin a specific version in production:
+
+```bash
+pip install nsq2mariadb==0.1.2
+```
+
+Or in a `requirements.txt`:
+
+```
+nsq2mariadb==0.1.2
+```
+
+Requires Python 3.9+. Dependencies: `pynsq`, `pymysql` (both pulled in
+automatically).
+
+### Dev install (working on `nsq2mariadb` itself)
 
 ```bash
 git clone https://github.com/larsborn/nsq2mariadb.git
 cd nsq2mariadb
 python3 -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate     # Windows bash: source .venv/Scripts/activate
 pip install -U pip
-pip install -e .
+pip install -e .              # install the package in editable mode
+pip install build twine       # only needed if you'll cut releases locally
 ```
 
-Requires Python 3.9+. Dependencies: `pynsq`, `pymysql`.
+Verify the install:
+
+```bash
+make test       # runs the unittest suite
+make version    # prints the current version from setup.py
+```
+
+See [`CLAUDE.md`](CLAUDE.md) for the full release flow and packaging notes.
 
 ## Usage
 
@@ -117,14 +142,22 @@ Releases are auto-published to [PyPI](https://pypi.org/project/nsq2mariadb/)
 by `.github/workflows/publish.yml` on every `v*` tag, via PyPI's Trusted
 Publishers (OIDC — no API token stored in the repo).
 
-To cut a release:
+To cut a release, from a clean `main`:
 
-1. Bump the version in `setup.py`.
-2. Commit and push to `main`.
-3. Tag and push: `git tag v0.1.3 && git push origin v0.1.3`.
+```bash
+make release-patch   # X.Y.Z -> X.Y.Z+1   (bug fixes)
+make release-minor   # X.Y.Z -> X.Y+1.0   (new features, backwards compatible)
+make release-major   # X.Y.Z -> X+1.0.0   (breaking changes)
+```
 
-The workflow builds an sdist + wheel and publishes them under the
-`pypi` GitHub environment.
+Each target bumps `setup.py`, commits with `chore: bump <version>`, creates
+a `v<version>` tag, and pushes both. The GitHub Actions workflow picks up the
+tag and uploads to PyPI.
+
+Use `make dry-release-patch` (etc.) to preview without modifying anything.
+
+See [`CLAUDE.md`](CLAUDE.md) for safety checks, prerequisites, and the
+manual-fallback flow.
 
 ## License
 
