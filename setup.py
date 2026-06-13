@@ -7,7 +7,7 @@ with open("README.md", "r", encoding="utf-8") as fp:
 
 setuptools.setup(
     name="nsq2mariadb",
-    version="0.1.3",
+    version="0.1.4",
     author="Lars Wallenborn",
     description="generic NSQ → MariaDB transporter with per-topic Python mapper classes",
     long_description=long_description,
