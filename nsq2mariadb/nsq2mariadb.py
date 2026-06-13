@@ -35,6 +35,11 @@ class NsqConfig:
     port: int
     channel: str
     max_in_flight: int = 1
+    # Heartbeat interval negotiated with nsqd, in seconds. pynsq considers a
+    # connection stale after 2x this without server traffic, so a higher value
+    # tolerates longer IOLoop pauses (e.g. slow synchronous DB inserts in the
+    # message handler) at the cost of slower dead-connection detection.
+    heartbeat_interval: int = 60
 
 
 class Mapper(ABC):
@@ -127,6 +132,7 @@ class Nsq2MariaDB:
                 topic=mapper.topic,
                 channel=self._nsq_config.channel,
                 max_in_flight=self._nsq_config.max_in_flight,
+                heartbeat_interval=self._nsq_config.heartbeat_interval,
             )
             self._logger.info(
                 f"subscribed to topic {mapper.topic!r} on channel {self._nsq_config.channel!r}"
