@@ -136,29 +136,6 @@ Pass several mappers to one `Nsq2MariaDB` instance — pynsq supports multiple
 independent NSQ subscription. Useful when a single project produces several
 related topics (e.g. `entries` + `runs`) that you want to land in the same DB.
 
-## Releasing
-
-Releases are auto-published to [PyPI](https://pypi.org/project/nsq2mariadb/)
-by `.github/workflows/publish.yml` on every `v*` tag, via PyPI's Trusted
-Publishers (OIDC — no API token stored in the repo).
-
-To cut a release, from a clean `main`:
-
-```bash
-make release-patch   # X.Y.Z -> X.Y.Z+1   (bug fixes)
-make release-minor   # X.Y.Z -> X.Y+1.0   (new features, backwards compatible)
-make release-major   # X.Y.Z -> X+1.0.0   (breaking changes)
-```
-
-Each target bumps `setup.py`, commits with `chore: bump <version>`, creates
-a `v<version>` tag, and pushes both. The GitHub Actions workflow picks up the
-tag and uploads to PyPI.
-
-Use `make dry-release-patch` (etc.) to preview without modifying anything.
-
-See [`CLAUDE.md`](CLAUDE.md) for safety checks, prerequisites, and the
-manual-fallback flow.
-
 ## License
 
 MIT.
